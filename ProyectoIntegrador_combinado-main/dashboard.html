@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Project Simulator</title>
+    
+    <!-- Archivos CSS en orden correcto -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+    <div class="dashboard-grid">
+        
+        <!-- CABECERA -->
+        <header class="header-area panel">
+            <div class="header-left">
+                <div class="logo"> AI Simulator</div>
+                <div class="header-info">
+                    <h1>Project Dashboard</h1>
+                    <p>Simulación de flujo de trabajo IA</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- COLUMNA IZQUIERDA -->
+        <aside class="sidebar-left panel">
+            <div class="sidebar-section">
+                <h3 class="section-title">DESARROLLADOR</h3>
+                <div class="user-profile">
+                    <div class="avatar" id="devAvatar"><i class="fa-solid fa-user-code" style="font-size: 18px; color: var(--accent-blue);"></i></div>
+                    <div class="user-info">
+                        <h4 id="devName">Freelancer</h4>
+                        <span class="status online" style="color: var(--accent-blue);">Conectado</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="sidebar-section">
+                <h3 class="section-title">CLIENTE IA</h3>
+                <div class="user-profile">
+                    <div class="avatar"><i class="fa-solid fa-robot" style="font-size: 18px; color: var(--accent-green);"></i></div>
+                    <div class="user-info">
+                        <h4>Ollama Llama3</h4>
+                        <span class="status online">Online</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="sidebar-section">
+                <h3 class="section-title">NIVEL DE DIFICULTAD</h3>
+                <div class="difficulty-options">
+                    <div class="option-card">
+                        <span class="dot green"></span>
+                        <div class="option-text">
+                            <strong>Junior</strong>
+                            <span>Proyectos básicos</span>
+                        </div>
+                    </div>
+                    <div class="option-card active">
+                        <span class="dot yellow"></span>
+                        <div class="option-text">
+                            <strong>Semi Senior</strong>
+                            <span>Proyectos intermedios</span>
+                        </div>
+                    </div>
+                    <div class="option-card">
+                        <span class="dot red"></span>
+                        <div class="option-text">
+                            <strong>Senior</strong>
+                            <span>Proyectos avanzados</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="sidebar-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%; flex-shrink: 0;">
+                <a href="index.html" class="btn-sidebar-nav"><i class="fa-solid fa-house"></i> Volver al Inicio</a>
+                <button id="logoutBtn" class="btn-sidebar-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <!-- COLUMNA CENTRAL (Se expande automáticamente) -->
+        <main class="panel main-content">
+            <section id="chat-box" class="chat-requisitos">
+                <p style="color: var(--text-muted); text-align: center; margin-top: 20px;">
+                   El cliente IA está esperando que aceptes un Proyecto...
+                </p>
+            </section>
+            
+            <section class="decision-developer">
+                <div class="decision-header">
+                    <h3>TU DECISIÓN COMO DEVELOPER</h3>
+                    <p>Revisa los requisitos y decide tu siguiente acción.</p>
+                </div>
+
+                <!-- Contenedor de Búsqueda y Entrega de Archivos -->
+                <div id="file-delivery-container" class="file-delivery-container">
+                    <label class="delivery-label">ARCHIVOS DE ENTREGA</label>
+                    <div class="file-search-wrapper">
+                        <div class="search-input-container">
+                            <span class="search-icon"></span>
+                            <input type="text" id="file-search-input" placeholder="Buscar archivo del proyecto... (ej. index.html)" disabled>
+                            <div id="search-suggestions" class="search-suggestions-dropdown hidden"></div>
+                        </div>
+                        <div class="file-upload-btn-wrapper">
+                            <button class="btn-upload" id="btn-upload-trigger" type="button" disabled>
+                                Buscar archivo local...
+                            </button>
+                            <input type="file" id="real-file-input" style="display: none;">
+                        </div>
+                    </div>
+                    <div id="selected-file-badge" class="selected-file-badge hidden">
+                        <span class="file-icon"></span>
+                        <span id="selected-file-name">ninguno</span>
+                        <button id="btn-remove-file" class="remove-file-btn" type="button">✕</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-green" id="btn-pedir">
+                        <span class="icon"></span> PEDIR PROYECTO
+                    </button>
+                    <button class="btn btn-green" id="btn-aceptar" disabled>
+                        <span class="icon">✓</span> ACEPTAR
+                    </button>
+                    <button class="btn btn-red" id="btn-rechazar" disabled>
+                        <span class="icon">✗</span> RECHAZAR
+                    </button>
+
+                    <button class="btn btn-blue outline" id="btn-entregar" disabled>
+                        <span class="icon">&lt;/&gt;</span> ENTREGAR
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- 4. FOOTER -->
+        <footer class="footer-area panel">
+            <div class="project-flow">
+                <div class="step active"><span class="step-number">1</span><span class="step-label">Requisitos</span></div>
+                <div class="step"><span class="step-number">2</span><span class="step-label">Desarrollo</span></div>
+                <div class="step"><span class="step-number">3</span><span class="step-label">Testing</span></div>
+                <div class="step"><span class="step-number">4</span><span class="step-label">Entrega</span></div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

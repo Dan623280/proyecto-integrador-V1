@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asignador Inteligente de Proyectos | Freelancers</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html" style="text-decoration: none; color: inherit;"><h2>Asignador Freelance</h2></a>
+        </div>
+
+        <ul class="menu" id="navMenu">
+          <!-- Dinámico -->
+        </ul>
+
+        <div class="buttons" id="navButtons">
+          <!-- Dinámico -->
+        </div>
+      </nav>
+    </header>
+
+    <!-- LANDING VIEW -->
+    <div id="landingView">
+      <section class="hero">
+        <div class="hero-text">
+          <h1 id="heroTitle">Consigue tu proyecto de práctica a medida</h1>
+
+          <p id="heroDesc">
+            Plataforma con asignación inteligente de proyectos para programadores freelancers.
+            Analizamos tu nivel técnico, stack de tecnologías y disponibilidad para asignarte un proyecto de práctica optimizado para ti.
+          </p>
+
+          <div class="hero-buttons" id="heroButtons">
+            <a href="register.html" class="btn-primary" id="btnHeroPrimary">Comenzar gratis</a>
+            <a href="#howItWorks" class="btn-secondary">Saber Más</a>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <i class="fa-solid fa-laptop-code"></i>
+        </div>
+      </section>
+
+      <section class="features" id="howItWorks">
+        <div class="card">
+          <i class="fa-solid fa-layer-group"></i>
+          <h3>Filtro por Nivel</h3>
+          <p>Evitamos arquitecturas complejas para Juniors y exigimos Docker y CI/CD para Seniors.</p>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-clock"></i>
+          <h3>Ajuste por Tiempo</h3>
+          <p>Adaptamos el número de requerimientos funcionales para que termines dentro de tu disponibilidad.</p>
+        </div>
+
+        <div class="card">
+          <i class="fa-solid fa-code-branch"></i>
+          <h3>Stack Preciso</h3>
+          <p>Generamos proyectos que utilicen exactamente las tecnologías que ya dominas, sin proponer stacks externos.</p>
+        </div>
+      </section>
+    </div>
+
+    <footer id="footer">
+      <p>© 2026 Asignador Inteligente de Proyectos - Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = JSON.parse(localStorage.getItem('freelancer_user'));
+
+        const navMenu = document.getElementById("navMenu");
+        const navButtons = document.getElementById("navButtons");
+        const heroTitle = document.getElementById("heroTitle");
+        const heroDesc = document.getElementById("heroDesc");
+        const btnHeroPrimary = document.getElementById("btnHeroPrimary");
+
+        // Always display the landing/home view
+        const landingView = document.getElementById("landingView");
+        if (landingView) {
+          landingView.style.display = "block";
+        }
+
+        if (user) {
+          // Usuario Autenticado
+          if (heroTitle) {
+            heroTitle.innerText = `¡Bienvenido de nuevo, ${user.name}!`;
+          }
+          if (heroDesc) {
+            heroDesc.innerText = 'Nos alegra tenerte de vuelta. Explora la plataforma y continúa aprendiendo de la mano de expertos en su área.';
+          }
+          if (btnHeroPrimary) {
+            btnHeroPrimary.innerText = 'Ir al simulador';
+            btnHeroPrimary.href = 'dashboard.html';
+            btnHeroPrimary.style.display = 'inline-block';
+          }
+
+          navMenu.innerHTML = `
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="dashboard.html">Simulador</a></li>
+            <li><a href="#howItWorks">Cómo Funciona</a></li>
+          `;
+
+          navButtons.innerHTML = `
+            <span class="user-tag" style="margin-right: 15px; color: #60a5fa;"><i class="fa-solid fa-user"></i> ${user.name}</span>
+            <button id="logoutBtn" class="btn-login" style="cursor: pointer; background: transparent;">Cerrar Sesión</button>
+          `;
+
+          document.getElementById("logoutBtn").addEventListener("click", function () {
+            Swal.fire({
+              title: '¿Cerrar sesión?',
+              text: '¿Estás seguro de que deseas salir de tu cuenta?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonText: 'Sí, salir',
+              cancelButtonText: 'Cancelar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                localStorage.removeItem('freelancer_user');
+                Swal.fire({
+                  title: '¡Sesión cerrada!',
+                  text: 'Has salido correctamente.',
+                  icon: 'success',
+                  timer: 1500,
+                  showConfirmButton: false,
+                  allowOutsideClick: false
+                }).then(() => {
+                  window.location.reload();
+                });
+              }
+            });
+          });
+        } else {
+          // Invitado
+          navMenu.innerHTML = `
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="#howItWorks">Cómo Funciona</a></li>
+          `;
+
+          navButtons.innerHTML = `
+            <a href="login.html" class="btn-login">Iniciar Sesión</a>
+            <a href="register.html" class="btn-register">Registrarse</a>
+          `;
+        }
+      });
+    </script>
+  </body>
+</html>

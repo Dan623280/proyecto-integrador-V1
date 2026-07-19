@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro | Asignador Freelance</title>
+
+    <link rel="stylesheet" href="css/register.css" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Lado izquierdo -->
+      <div class="left">
+        <a href="index.html" class="logo-link">
+          <div class="logo">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>Asignador Freelance</h1>
+          </div>
+        </a>
+
+        <h2>¡Únete a nosotros!</h2>
+
+        <p>
+          Crea una cuenta para acceder a cientos de cursos y aprender con profesores expertos.
+        </p>
+      </div>
+
+      <!-- Lado derecho -->
+      <div class="right">
+        <a href="index.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Volver al inicio
+        </a>
+
+        <form action="login.html" method="GET" id="registerForm">
+          <h2>Crear Cuenta</h2>
+
+          <div class="input-box">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" name="name" placeholder="Nombre completo" required autocomplete="name" />
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" name="email" placeholder="Correo electrónico" required autocomplete="email" />
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" name="password" id="password" placeholder="Contraseña" required autocomplete="new-password" />
+            <i class="fa-solid fa-eye toggle-password" id="togglePassword" style="cursor: pointer; margin-left: 10px; color: #cbd5e1; transition: 0.2s;"></i>
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              placeholder="Confirmar contraseña"
+              required
+              autocomplete="new-password"
+            />
+            <i class="fa-solid fa-eye toggle-password" id="toggleConfirmPassword" style="cursor: pointer; margin-left: 10px; color: #cbd5e1; transition: 0.2s;"></i>
+          </div>
+
+          <button type="submit">Registrarse</button>
+
+          <p class="login">
+            ¿Ya tienes una cuenta?
+            <a href="login.html">Inicia sesión</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const togglePassword = document.querySelector('#togglePassword');
+      const password = document.querySelector('#password');
+      
+      togglePassword.addEventListener('click', function () {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+      const confirmPassword = document.querySelector('#confirmPassword');
+      
+      toggleConfirmPassword.addEventListener('click', function () {
+        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        confirmPassword.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Hover effects for eye icons
+      [togglePassword, toggleConfirmPassword].forEach(toggle => {
+        toggle.addEventListener('mouseenter', function() {
+          this.style.color = '#3b82f6';
+        });
+        toggle.addEventListener('mouseleave', function() {
+          this.style.color = '#cbd5e1';
+        });
+      });
+
+      // Form validation for matching passwords and registration simulation
+      const form = document.querySelector('#registerForm');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (password.value !== confirmPassword.value) {
+          Swal.fire({
+            title: '¡Error!',
+            text: 'Las contraseñas no coinciden. Por favor, verifíquelas.',
+            icon: 'error'
+          });
+          return;
+        }
+        
+        const name = document.querySelector('input[name="name"]').value;
+        const email = document.querySelector('input[name="email"]').value;
+        
+        // Save simulated registered user details
+        localStorage.setItem('registered_user', JSON.stringify({ name: name, email: email }));
+        
+        Swal.fire({
+          title: '¡Registro exitoso!',
+          text: 'Tu cuenta ha sido creada. Por favor, inicia sesión con tus credenciales.',
+          icon: 'success',
+          confirmButtonText: 'Ir a Iniciar Sesión',
+          allowOutsideClick: false
+        }).then(() => {
+          window.location.href = 'login.html';
+        });
+      });
+    </script>
+  </body>
+</html>

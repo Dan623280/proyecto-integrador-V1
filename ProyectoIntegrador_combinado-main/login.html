@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión | Asignador Freelance</title>
+
+    <link rel="stylesheet" href="css/login.css" />
+
+    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <a href="index.html" class="logo-link">
+          <div class="logo">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>Asignador Freelance</h1>
+          </div>
+        </a>
+
+        <h2>¡Bienvenido!</h2>
+
+        <p>
+          Accede a tus cursos, revisa tu progreso y continúa aprendiendo donde
+          lo dejaste.
+        </p>
+      </div>
+
+      <div class="right">
+        <a href="index.html" class="btn-back">
+          <i class="fa-solid fa-arrow-left"></i> Volver al inicio
+        </a>
+
+        <form action="index.html" method="GET">
+          <h2>Iniciar Sesión</h2>
+
+          <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" name="email" placeholder="Correo electrónico" required autocomplete="username" />
+          </div>
+
+          <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" name="password" id="password" placeholder="Contraseña" required autocomplete="current-password" />
+            <i class="fa-solid fa-eye toggle-password" id="togglePassword" style="cursor: pointer; margin-left: 10px; color: #cbd5e1; transition: 0.2s;"></i>
+          </div>
+
+          <div class="options">
+            <label>
+              <input type="checkbox" name="remember" />
+              Recordarme
+            </label>
+
+            <a href="#">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit">Iniciar Sesión</button>
+
+          <p class="register">
+            ¿No tienes cuenta?
+            <a href="register.html">Regístrate</a>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const togglePassword = document.querySelector('#togglePassword');
+      const password = document.querySelector('#password');
+
+      togglePassword.addEventListener('click', function () {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        
+        // Alternar el icono
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+
+      // Hover effect on the eye icon
+      togglePassword.addEventListener('mouseenter', function() {
+        this.style.color = '#3b82f6';
+      });
+      togglePassword.addEventListener('mouseleave', function() {
+        this.style.color = '#cbd5e1';
+      });
+
+      // Simulated Login submission
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = document.querySelector('input[type="email"]').value;
+        const name = email.split('@')[0];
+        const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+        
+        localStorage.setItem('freelancer_user', JSON.stringify({ name: displayName, email: email }));
+        
+        Swal.fire({
+          title: '¡Bienvenido de nuevo!',
+          text: `Hola ${displayName}, has iniciado sesión correctamente.`,
+          icon: 'success',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          allowOutsideClick: false
+        }).then(() => {
+          window.location.href = 'dashboard.html';
+        });
+      });
+    </script>
+  </body>
+</html>
