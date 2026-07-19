@@ -44,7 +44,7 @@
           <i class="fa-solid fa-arrow-left"></i> Volver al inicio
         </a>
 
-        <form action="index.html" method="GET">
+        <form id="loginForm">
           <h2>Iniciar Sesión</h2>
 
           <div class="input-box">
@@ -77,49 +77,9 @@
       </div>
     </div>
 
-    <script>
-      const togglePassword = document.querySelector('#togglePassword');
-      const password = document.querySelector('#password');
-
-      togglePassword.addEventListener('click', function () {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        
-        // Alternar el icono
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-      });
-
-      // Hover effect on the eye icon
-      togglePassword.addEventListener('mouseenter', function() {
-        this.style.color = '#3b82f6';
-      });
-      togglePassword.addEventListener('mouseleave', function() {
-        this.style.color = '#cbd5e1';
-      });
-
-      // Simulated Login submission
-      const form = document.querySelector('form');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const email = document.querySelector('input[type="email"]').value;
-        const name = email.split('@')[0];
-        const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-        
-        localStorage.setItem('freelancer_user', JSON.stringify({ name: displayName, email: email }));
-        
-        Swal.fire({
-          title: '¡Bienvenido de nuevo!',
-          text: `Hola ${displayName}, has iniciado sesión correctamente.`,
-          icon: 'success',
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-          allowOutsideClick: false
-        }).then(() => {
-          window.location.href = 'dashboard.html';
-        });
-      });
-    </script>
+    <script
+  type="module"
+  src="js/login.js"
+></script>
   </body>
 </html>

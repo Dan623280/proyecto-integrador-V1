@@ -46,7 +46,7 @@
           <i class="fa-solid fa-arrow-left"></i> Volver al inicio
         </a>
 
-        <form action="login.html" method="GET" id="registerForm">
+        <form id="registerForm">
           <h2>Crear Cuenta</h2>
 
           <div class="input-box">
@@ -88,66 +88,9 @@
       </div>
     </div>
 
-    <script>
-      const togglePassword = document.querySelector('#togglePassword');
-      const password = document.querySelector('#password');
-      
-      togglePassword.addEventListener('click', function () {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-      });
-
-      const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
-      const confirmPassword = document.querySelector('#confirmPassword');
-      
-      toggleConfirmPassword.addEventListener('click', function () {
-        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-        confirmPassword.setAttribute('type', type);
-        this.classList.toggle('fa-eye');
-        this.classList.toggle('fa-eye-slash');
-      });
-
-      // Hover effects for eye icons
-      [togglePassword, toggleConfirmPassword].forEach(toggle => {
-        toggle.addEventListener('mouseenter', function() {
-          this.style.color = '#3b82f6';
-        });
-        toggle.addEventListener('mouseleave', function() {
-          this.style.color = '#cbd5e1';
-        });
-      });
-
-      // Form validation for matching passwords and registration simulation
-      const form = document.querySelector('#registerForm');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        if (password.value !== confirmPassword.value) {
-          Swal.fire({
-            title: '¡Error!',
-            text: 'Las contraseñas no coinciden. Por favor, verifíquelas.',
-            icon: 'error'
-          });
-          return;
-        }
-        
-        const name = document.querySelector('input[name="name"]').value;
-        const email = document.querySelector('input[name="email"]').value;
-        
-        // Save simulated registered user details
-        localStorage.setItem('registered_user', JSON.stringify({ name: name, email: email }));
-        
-        Swal.fire({
-          title: '¡Registro exitoso!',
-          text: 'Tu cuenta ha sido creada. Por favor, inicia sesión con tus credenciales.',
-          icon: 'success',
-          confirmButtonText: 'Ir a Iniciar Sesión',
-          allowOutsideClick: false
-        }).then(() => {
-          window.location.href = 'login.html';
-        });
-      });
-    </script>
+    <script
+  type="module"
+  src="js/register.js"
+></script>
   </body>
 </html>
