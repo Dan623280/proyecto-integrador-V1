@@ -1,29 +1,13 @@
 import bcrypt
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr, Field
 from psycopg2.errors import UniqueViolation
 
-from database import obtener_conexion
+from app.database import obtener_conexion
 
 
-app = FastAPI(
-    title="API Proyecto Integrador",
-    version="1.0.0"
-)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost",
-        "http://127.0.0.1",
-        "http://localhost:5500",
-        "http://127.0.0.1:5500"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+router = APIRouter(
+    tags=["Autenticación"]
 )
 
 
@@ -38,15 +22,7 @@ class LoginRequest(BaseModel):
     password: str = Field(min_length=6, max_length=72)
 
 
-@app.get("/")
-def inicio():
-    return {
-        "success": True,
-        "message": "API funcionando correctamente"
-    }
-
-
-@app.post("/registro")
+@router.post("/registro")
 def registrar_usuario(datos: RegistroRequest):
     conexion = None
     cursor = None
@@ -55,9 +31,15 @@ def registrar_usuario(datos: RegistroRequest):
         conexion = obtener_conexion()
         cursor = conexion.cursor()
 
+        email = datos.email.lower().strip()
+
         cursor.execute(
-            "SELECT id FROM usuarios WHERE email = %s",
-            (datos.email.lower(),)
+            """
+            SELECT id
+            FROM usuarios
+            WHERE email = %s;
+            """,
+            (email,)
         )
 
         if cursor.fetchone():
@@ -73,18 +55,23 @@ def registrar_usuario(datos: RegistroRequest):
 
         cursor.execute(
             """
-            INSERT INTO usuarios (nombre, email, password_hash)
+            INSERT INTO usuarios (
+                nombre,
+                email,
+                password_hash
+            )
             VALUES (%s, %s, %s)
             RETURNING id, nombre, email;
             """,
             (
                 datos.nombre.strip(),
-                datos.email.lower(),
+                email,
                 password_hash
             )
         )
 
         usuario = cursor.fetchone()
+
         conexion.commit()
 
         return {
@@ -110,9 +97,11 @@ def registrar_usuario(datos: RegistroRequest):
         if conexion:
             conexion.rollback()
 
+        print(f"Error al registrar usuario: {error}")
+
         return {
             "success": False,
-            "message": f"Error al registrar el usuario: {error}"
+            "message": "No fue posible registrar el usuario."
         }
 
     finally:
@@ -123,7 +112,7 @@ def registrar_usuario(datos: RegistroRequest):
             conexion.close()
 
 
-@app.post("/login")
+@router.post("/login")
 def iniciar_sesion(datos: LoginRequest):
     conexion = None
     cursor = None
@@ -132,13 +121,19 @@ def iniciar_sesion(datos: LoginRequest):
         conexion = obtener_conexion()
         cursor = conexion.cursor()
 
+        email = datos.email.lower().strip()
+
         cursor.execute(
             """
-            SELECT id, nombre, email, password_hash
+            SELECT
+                id,
+                nombre,
+                email,
+                password_hash
             FROM usuarios
             WHERE email = %s;
             """,
-            (datos.email.lower(),)
+            (email,)
         )
 
         usuario = cursor.fetchone()
@@ -171,9 +166,11 @@ def iniciar_sesion(datos: LoginRequest):
         }
 
     except Exception as error:
+        print(f"Error al iniciar sesión: {error}")
+
         return {
             "success": False,
-            "message": f"Error al iniciar sesión: {error}"
+            "message": "No fue posible iniciar sesión."
         }
 
     finally:
