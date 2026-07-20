@@ -1,7 +1,11 @@
+import os
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from app.routers import auth
+from app.routers import ai, auth
 
 
 app = FastAPI(
@@ -17,6 +21,12 @@ origins = [
     "http://127.0.0.1:5500"
 ]
 
+origins.extend(
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +38,7 @@ app.add_middleware(
 
 
 app.include_router(auth.router)
+app.include_router(ai.router)
 
 
 @app.get("/")
@@ -44,3 +55,13 @@ def comprobar_estado():
         "success": True,
         "status": "healthy"
     }
+
+
+frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
+
+if frontend_dir.is_dir():
+    app.mount(
+        "/",
+        StaticFiles(directory=str(frontend_dir), html=True),
+        name="frontend"
+    )

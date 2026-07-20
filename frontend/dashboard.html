@@ -1,172 +1,586 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Project Simulator</title>
-    
-    <!-- Archivos CSS en orden correcto -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cards.css">
-    <link rel="stylesheet" href="css/sidebar.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <!-- FontAwesome -->
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>
+      Dashboard | Asignador Freelance IA
+    </title>
+
+    <link
+      rel="stylesheet"
+      href="./css/dashboard.css"
+    />
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
-    
-</head>
-<body>
 
-    <div class="dashboard-grid">
-        
-        <!-- CABECERA -->
-        <header class="header-area panel">
-            <div class="header-left">
-                <div class="logo"> AI Simulator</div>
-                <div class="header-info">
-                    <h1>Project Dashboard</h1>
-                    <p>Simulación de flujo de trabajo IA</p>
-                </div>
-            </div>
-        </header>
-
-        <!-- COLUMNA IZQUIERDA -->
-        <aside class="sidebar-left panel">
-            <div class="sidebar-section">
-                <h3 class="section-title">DESARROLLADOR</h3>
-                <div class="user-profile">
-                    <div class="avatar" id="devAvatar"><i class="fa-solid fa-user-code" style="font-size: 18px; color: var(--accent-blue);"></i></div>
-                    <div class="user-info">
-                        <h4 id="devName">Freelancer</h4>
-                        <span class="status online" style="color: var(--accent-blue);">Conectado</span>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="divider">
-
-            <div class="sidebar-section">
-                <h3 class="section-title">CLIENTE IA</h3>
-                <div class="user-profile">
-                    <div class="avatar"><i class="fa-solid fa-robot" style="font-size: 18px; color: var(--accent-green);"></i></div>
-                    <div class="user-info">
-                        <h4>Ollama Llama3</h4>
-                        <span class="status online">Online</span>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="divider">
-
-            <div class="sidebar-section">
-                <h3 class="section-title">NIVEL DE DIFICULTAD</h3>
-                <div class="difficulty-options">
-                    <div class="option-card">
-                        <span class="dot green"></span>
-                        <div class="option-text">
-                            <strong>Junior</strong>
-                            <span>Proyectos básicos</span>
-                        </div>
-                    </div>
-                    <div class="option-card active">
-                        <span class="dot yellow"></span>
-                        <div class="option-text">
-                            <strong>Semi Senior</strong>
-                            <span>Proyectos intermedios</span>
-                        </div>
-                    </div>
-                    <div class="option-card">
-                        <span class="dot red"></span>
-                        <div class="option-text">
-                            <strong>Senior</strong>
-                            <span>Proyectos avanzados</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <hr class="divider">
-
-            <div class="sidebar-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; width: 100%; flex-shrink: 0;">
-                <a href="index.html" class="btn-sidebar-nav"><i class="fa-solid fa-house"></i> Volver al Inicio</a>
-                <button id="logoutBtn" class="btn-sidebar-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
-            </div>
-        </aside>
-
-        <!-- COLUMNA CENTRAL (Se expande automáticamente) -->
-        <main class="panel main-content">
-            <section id="chat-box" class="chat-requisitos">
-                <p style="color: var(--text-muted); text-align: center; margin-top: 20px;">
-                   El cliente IA está esperando que aceptes un Proyecto...
-                </p>
-            </section>
-            
-            <section class="decision-developer">
-                <div class="decision-header">
-                    <h3>TU DECISIÓN COMO DEVELOPER</h3>
-                    <p>Revisa los requisitos y decide tu siguiente acción.</p>
-                </div>
-
-                <!-- Contenedor de Búsqueda y Entrega de Archivos -->
-                <div id="file-delivery-container" class="file-delivery-container">
-                    <label class="delivery-label">ARCHIVOS DE ENTREGA</label>
-                    <div class="file-search-wrapper">
-                        <div class="search-input-container">
-                            <span class="search-icon"></span>
-                            <input type="text" id="file-search-input" placeholder="Buscar archivo del proyecto... (ej. index.html)" disabled>
-                            <div id="search-suggestions" class="search-suggestions-dropdown hidden"></div>
-                        </div>
-                        <div class="file-upload-btn-wrapper">
-                            <button class="btn-upload" id="btn-upload-trigger" type="button" disabled>
-                                Buscar archivo local...
-                            </button>
-                            <input type="file" id="real-file-input" style="display: none;">
-                        </div>
-                    </div>
-                    <div id="selected-file-badge" class="selected-file-badge hidden">
-                        <span class="file-icon"></span>
-                        <span id="selected-file-name">ninguno</span>
-                        <button id="btn-remove-file" class="remove-file-btn" type="button">✕</button>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-green" id="btn-pedir">
-                        <span class="icon"></span> PEDIR PROYECTO
-                    </button>
-                    <button class="btn btn-green" id="btn-aceptar" disabled>
-                        <span class="icon">✓</span> ACEPTAR
-                    </button>
-                    <button class="btn btn-red" id="btn-rechazar" disabled>
-                        <span class="icon">✗</span> RECHAZAR
-                    </button>
-
-                    <button class="btn btn-blue outline" id="btn-entregar" disabled>
-                        <span class="icon">&lt;/&gt;</span> ENTREGAR
-                    </button>
-                </div>
-            </section>
-        </main>
-
-        <!-- 4. FOOTER -->
-        <footer class="footer-area panel">
-            <div class="project-flow">
-                <div class="step active"><span class="step-number">1</span><span class="step-label">Requisitos</span></div>
-                <div class="step"><span class="step-number">2</span><span class="step-label">Desarrollo</span></div>
-                <div class="step"><span class="step-number">3</span><span class="step-label">Testing</span></div>
-                <div class="step"><span class="step-number">4</span><span class="step-label">Entrega</span></div>
-            </div>
-        </footer>
-
-    </div>
-<!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="./css/dashboard.css">
+  </head>
+
+  <body>
+    <!-- ===================================================
+         ENCABEZADO
+    ==================================================== -->
+
+    <header class="dashboard-header">
+      <a
+        href="./dashboard.html"
+        class="brand"
+      >
+        <i class="fa-solid fa-laptop-code"></i>
+
+        <div>
+          <strong>
+            Asignador Freelance
+          </strong>
+
+          <span>
+            Proyectos generados con IA
+          </span>
+        </div>
+      </a>
+
+      <div class="user-area">
+        <div class="user-information">
+          <div class="user-avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+
+          <div>
+            <span>
+              Bienvenido
+            </span>
+
+            <strong id="user-name">
+              Usuario
+            </strong>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="btn-logout"
+          class="btn-logout"
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+    <!-- ===================================================
+         CONTENIDO PRINCIPAL
+    ==================================================== -->
+
+    <main class="dashboard-main">
+      <!-- Encabezado de la página -->
+
+      <section class="dashboard-welcome">
+        <div>
+          <span class="section-label">
+            Plataforma de práctica
+          </span>
+
+          <h1>
+            Genera un proyecto con inteligencia artificial
+          </h1>
+
+          <p>
+            Selecciona tu nivel, recibe un proyecto nuevo,
+            desarrolla la solución y entrega tu código para
+            que la inteligencia artificial lo evalúe.
+          </p>
+        </div>
+
+        <div class="ia-status-card">
+          <div class="ia-status-icon">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+
+          <div>
+            <strong>
+              Gemini conectado por el usuario
+            </strong>
+
+            <span>
+              Tu clave nunca se guarda en la base de datos
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="api-key-section" aria-labelledby="api-key-title">
+        <div class="api-key-copy">
+          <span class="section-label">Configuración de Gemini</span>
+          <h2 id="api-key-title">Conecta tu API key</h2>
+          <p>La clave se conserva solo en este navegador y se envía directamente al backend cuando usas la IA.</p>
+        </div>
+        <div class="api-key-control">
+          <label for="gemini-api-key">API key de Google AI Studio</label>
+          <div class="api-key-input-row">
+            <input id="gemini-api-key" type="password" placeholder="Pega aquí tu clave de Gemini" autocomplete="off" />
+            <button type="button" id="toggle-api-key" class="btn-icon" aria-label="Mostrar u ocultar clave">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <button type="button" id="save-api-key" class="btn-primary">Guardar clave</button>
+          </div>
+          <span id="api-key-status" class="api-key-status">Clave pendiente</span>
+        </div>
+      </section>
+
+      <!-- =================================================
+           PROGRESO
+      ================================================== -->
+
+      <section class="progress-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-label">
+              Flujo de trabajo
+            </span>
+
+            <h2>
+              Progreso del proyecto
+            </h2>
+          </div>
+        </div>
+
+        <div class="steps-container">
+          <div class="step active">
+            <div class="step-number">
+              1
+            </div>
+
+            <div class="step-content">
+              <strong>
+                Proyecto
+              </strong>
+
+              <span>
+                Generar propuesta
+              </span>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">
+              2
+            </div>
+
+            <div class="step-content">
+              <strong>
+                Desarrollo
+              </strong>
+
+              <span>
+                Aceptar y programar
+              </span>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">
+              3
+            </div>
+
+            <div class="step-content">
+              <strong>
+                Entrega
+              </strong>
+
+              <span>
+                Subir archivo
+              </span>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">
+              4
+            </div>
+
+            <div class="step-content">
+              <strong>
+                Evaluación
+              </strong>
+
+              <span>
+                Recibir calificación
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+           CONTENIDO EN DOS COLUMNAS
+      ================================================== -->
+
+      <div class="dashboard-grid">
+        <!-- Columna izquierda -->
+
+        <section class="dashboard-panel configuration-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-label">
+                Configuración
+              </span>
+
+              <h2>
+                Solicitar proyecto
+              </h2>
+            </div>
+
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+
+          <!-- Selección de nivel -->
+
+          <div class="difficulty-section">
+            <h3>
+              Selecciona tu nivel
+            </h3>
+
+            <p>
+              La IA adaptará la complejidad del proyecto al
+              nivel seleccionado.
+            </p>
+
+            <div class="difficulty-options">
+              <button
+                type="button"
+                class="option-card active"
+                data-difficulty="Junior"
+              >
+                <div class="option-icon">
+                  <i class="fa-solid fa-seedling"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    Junior
+                  </strong>
+
+                  <span>
+                    Fundamentos y proyectos sencillos
+                  </span>
+                </div>
+
+                <i class="fa-solid fa-circle-check option-check"></i>
+              </button>
+
+              <button
+                type="button"
+                class="option-card"
+                data-difficulty="Semi Senior"
+              >
+                <div class="option-icon">
+                  <i class="fa-solid fa-code"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    Semi Senior
+                  </strong>
+
+                  <span>
+                    POO, persistencia y lógica intermedia
+                  </span>
+                </div>
+
+                <i class="fa-solid fa-circle-check option-check"></i>
+              </button>
+
+              <button
+                type="button"
+                class="option-card"
+                data-difficulty="Senior"
+              >
+                <div class="option-icon">
+                  <i class="fa-solid fa-layer-group"></i>
+                </div>
+
+                <div>
+                  <strong>
+                    Senior
+                  </strong>
+
+                  <span>
+                    Arquitectura y retos avanzados
+                  </span>
+                </div>
+
+                <i class="fa-solid fa-circle-check option-check"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botón pedir -->
+
+          <button
+            type="button"
+            id="btn-pedir"
+            class="btn-primary btn-full"
+          >
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            Pedir Proyecto
+          </button>
+
+          <!-- Aceptar o rechazar -->
+
+          <div class="project-actions">
+            <button
+              type="button"
+              id="btn-aceptar"
+              class="btn-success"
+              disabled
+            >
+              <i class="fa-solid fa-check"></i>
+              Aceptar
+            </button>
+
+            <button
+              type="button"
+              id="btn-rechazar"
+              class="btn-danger"
+              disabled
+            >
+              <i class="fa-solid fa-xmark"></i>
+              Rechazar
+            </button>
+          </div>
+
+          <!-- =============================================
+               ENTREGA DE ARCHIVOS
+          ============================================== -->
+
+          <section
+            id="file-delivery-container"
+            class="file-delivery-container"
+          >
+            <div class="file-delivery-heading">
+              <div>
+                <span class="section-label">
+                  Entrega
+                </span>
+
+                <h3>
+                  Subir solución
+                </h3>
+              </div>
+
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+
+            <p class="file-help-text">
+              Selecciona un archivo real desde tu computador.
+              La IA leerá su contenido y lo comparará con los
+              requisitos del proyecto.
+            </p>
+
+            <!-- Archivos sugeridos -->
+
+            <div class="file-search-wrapper">
+              <label for="file-search-input">
+                Buscar archivos sugeridos
+              </label>
+
+              <div class="file-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                  type="text"
+                  id="file-search-input"
+                  placeholder="Ejemplo: main.py"
+                  autocomplete="off"
+                  disabled
+                />
+              </div>
+
+              <div
+                id="search-suggestions"
+                class="search-suggestions hidden"
+              ></div>
+            </div>
+
+            <!-- Selección de archivo real -->
+
+            <input
+              type="file"
+              id="real-file-input"
+              class="hidden"
+              multiple
+              accept=".py,.js,.html,.css,.json,.txt,.sql,.java,.c,.cpp,.cs,.php,.go,.ts,.tsx,.jsx,.xml,.yaml,.yml,.md"
+            />
+
+            <button
+              type="button"
+              id="btn-upload-trigger"
+              class="btn-upload"
+              disabled
+            >
+              <i class="fa-solid fa-folder-open"></i>
+              Seleccionar archivo
+            </button>
+
+            <!-- Archivos seleccionados -->
+
+            <div
+              id="selected-file-badge"
+              class="selected-file-badge hidden"
+            >
+              <div class="selected-file-info">
+                <i class="fa-solid fa-file-code"></i>
+
+                <div>
+                  <span>Archivos seleccionados</span>
+                  <strong>Se enviarán juntos a Gemini</strong>
+                </div>
+              </div>
+
+            </div>
+            <div id="selected-file-list" class="selected-file-list"></div>
+
+            <button
+              type="button"
+              id="btn-entregar"
+              class="btn-primary btn-full"
+              disabled
+            >
+              <i class="fa-solid fa-paper-plane"></i>
+              Entregar
+            </button>
+          </section>
+        </section>
+
+        <!-- Columna derecha -->
+
+        <section class="dashboard-panel chat-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-label">
+                Asistente
+              </span>
+
+              <h2>
+                Asistente Gemini
+              </h2>
+            </div>
+
+            <div class="online-status">
+              <span class="online-dot"></span>
+              Disponible
+            </div>
+          </div>
+
+          <div
+            id="chat-box"
+            class="chat-box"
+          >
+            <div class="message-ia">
+              <div class="message-avatar">
+                <i class="fa-solid fa-robot"></i>
+              </div>
+
+              <div class="message-content">
+                <p>
+                  <strong>
+                    Gemini:
+                  </strong>
+                </p>
+
+                <p>
+                  Hola. Selecciona tu nivel y presiona
+                  <strong>Pedir Proyecto</strong>.
+                </p>
+
+                <p>
+                  Configura tu API key, generaré una propuesta y la guardaré
+                  automáticamente en tu cuenta.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- =================================================
+           HISTORIAL
+      ================================================== -->
+
+      <section class="history-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-label">
+              PostgreSQL
+            </span>
+
+            <h2>
+              Mis proyectos
+            </h2>
+
+            <p>
+              Aquí aparecen los proyectos asociados a tu usuario,
+              incluso después de cerrar sesión y volver a entrar.
+            </p>
+          </div>
+
+          <div class="history-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+          </div>
+        </div>
+
+        <div
+          id="projects-history"
+          class="projects-history"
+        >
+          <div class="empty-projects">
+            <p>
+              Cargando tus proyectos...
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================================================
+         PIE DE PÁGINA
+    ==================================================== -->
+
+    <footer class="dashboard-footer">
+      <p>
+        Asignador Freelance IA · Proyecto Integrador
+      </p>
+    </footer>
+
     <script
-  type="module"
-  src="js/main.js"
-></script>
-</body>
+      type="module"
+      src="./js/dashboard.js"
+    ></script>
+  </body>
 </html>
