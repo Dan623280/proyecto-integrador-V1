@@ -44,7 +44,7 @@ app.include_router(auth.router)
 app.include_router(ai.router)
 
 
-@app.get("/")
+@app.get("/api")
 def inicio():
     return {
         "success": True,
