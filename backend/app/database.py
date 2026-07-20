@@ -1,3 +1,5 @@
+"""Conexión única a PostgreSQL, configurada exclusivamente desde .env."""
+
 import os
 
 import psycopg2
@@ -8,6 +10,7 @@ load_dotenv()
 
 
 def obtener_conexion():
+    # Cada endpoint cierra su propia conexión en un bloque finally.
     return psycopg2.connect(
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT"),

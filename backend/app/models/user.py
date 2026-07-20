@@ -1,1 +1,0 @@
-# Aquí después irán los modelos de SQLAlchemy

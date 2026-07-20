@@ -1,3 +1,5 @@
+"""Punto de entrada de la API y del frontend en producción."""
+
 import os
 from pathlib import Path
 
@@ -14,6 +16,7 @@ app = FastAPI(
 )
 
 
+# Live Server durante desarrollo; producción agrega su dominio mediante .env.
 origins = [
     "http://localhost",
     "http://127.0.0.1",
@@ -57,6 +60,7 @@ def comprobar_estado():
     }
 
 
+# En producción una única URL sirve API y archivos estáticos.
 frontend_dir = Path(__file__).resolve().parents[2] / "frontend"
 
 if frontend_dir.is_dir():

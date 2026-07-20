@@ -1,4 +1,4 @@
-import { API_URL } from './config.js';
+import { crearDashboardApi } from './dashboard-api.js';
 import { iniciarEntregaArchivos } from './delivery.js';
 
 const SESSION_KEY = 'freelancer_user';
@@ -69,6 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const entregaArchivos =
         iniciarEntregaArchivos();
+
+    // La interfaz usa un cliente aislado para todas las peticiones HTTP.
+    const api = crearDashboardApi({
+        usuarioId: usuario.id,
+        obtenerApiKey
+    });
 
     // =====================================================
     // CONFIGURACIÓN INICIAL
@@ -169,122 +175,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // PETICIONES HTTP
     // =====================================================
 
-    async function procesarRespuesta(response) {
-        let data = {};
-
-        try {
-            data = await response.json();
-        } catch (error) {
-            console.error(
-                'La respuesta no contiene JSON:',
-                error
-            );
-        }
-
-        if (!response.ok || data.success === false) {
-            throw new Error(
-                data.detail ||
-                data.message ||
-                'Ocurrió un error en el servidor.'
-            );
-        }
-
-        return data;
-    }
-
     async function generarProyectoIA() {
-        const apiKey = obtenerApiKey();
-        if (!apiKey) throw new Error('Primero configura tu API key de Gemini.');
-        const response = await fetch(
-            `${API_URL}/ai/projects/generate`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Gemini-API-Key': apiKey
-                },
-                body: JSON.stringify({
-                    usuario_id: usuario.id,
-                    dificultad: dificultadActiva
-                })
-            }
-        );
-
-        return procesarRespuesta(response);
+        return api.generarProyecto(dificultadActiva);
     }
 
     async function aceptarProyectoAPI(
         proyecto
     ) {
-        const response = await fetch(
-            `${API_URL}/ai/projects/accept`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    usuario_id: usuario.id,
-                    nombre: proyecto.nombre,
-                    descripcion: proyecto.descripcion,
-                    dificultad: proyecto.dificultad,
-                    duracion_estimada: proyecto.duracion_estimada,
-                    objetivo: proyecto.objetivo,
-                    requisitos: proyecto.requisitos,
-                    archivos: proyecto.archivos
-                })
-            }
-        );
-
-        return procesarRespuesta(response);
-    }
-
-    async function rechazarProyectoAPI(
-        proyectoId
-    ) {
-        const response = await fetch(
-            `${API_URL}/ai/projects/${proyectoId}/reject`,
-            {
-                method: 'PATCH'
-            }
-        );
-
-        return procesarRespuesta(response);
+        return api.aceptarProyecto(proyecto);
     }
 
     async function entregarProyectoAPI(
         proyectoId,
         archivos
     ) {
-        const formData = new FormData();
-
-        formData.append(
-            'proyecto_id',
-            proyectoId
-        );
-
-        archivos.forEach((archivo) => {
-            formData.append('archivos', archivo);
-        });
-
-        const apiKey = obtenerApiKey();
-        if (!apiKey) throw new Error('Primero configura tu API key de Gemini.');
-        const response = await fetch(
-            `${API_URL}/ai/evaluate`,
-            {
-                method: 'POST',
-                headers: { 'X-Gemini-API-Key': apiKey },
-                body: formData
-            }
-        );
-
-        return procesarRespuesta(response);
+        return api.entregarProyecto(proyectoId, archivos);
     }
 
     async function obtenerProyectosUsuarioAPI() {
-        const response = await fetch(
-            `${API_URL}/ai/projects/user/${usuario.id}`
-        );
-
-        return procesarRespuesta(response);
+        return api.obtenerProyectos();
     }
 
     // =====================================================

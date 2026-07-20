@@ -99,8 +99,7 @@ def generar_propuesta(
                 detail="El usuario no existe."
             )
 
-        # Consultar proyectos anteriores para pedirle a la IA
-        # que no repita nombres.
+        # Solo los proyectos aceptados existen en la tabla y evitan repeticiones.
         cursor.execute(
             """
             SELECT nombre
@@ -295,72 +294,9 @@ def obtener_proyectos_usuario(
             conexion.close()
 
 
-@router.patch("/projects/{proyecto_id}/accept")
-def aceptar_proyecto(
-    proyecto_id: int
-):
-    conexion = None
-    cursor = None
-
-    try:
-        conexion = obtener_conexion()
-        cursor = conexion.cursor()
-
-        cursor.execute(
-            """
-            UPDATE proyectos
-            SET
-                estado = 'aceptado',
-                fecha_actualizacion = CURRENT_TIMESTAMP
-            WHERE id = %s
-              AND estado != 'rechazado'
-            RETURNING
-                id,
-                estado,
-                fecha_actualizacion;
-            """,
-            (proyecto_id,)
-        )
-
-        fila = cursor.fetchone()
-
-        if fila is None:
-            raise HTTPException(
-                status_code=404,
-                detail=(
-                    "Proyecto no encontrado o rechazado."
-                )
-            )
-
-        conexion.commit()
-
-        return {
-            "success": True,
-            "proyecto": {
-                "id": fila[0],
-                "estado": fila[1],
-                "fecha_actualizacion": (
-                    fila[2].isoformat()
-                )
-            }
-        }
-
-    except HTTPException:
-        if conexion:
-            conexion.rollback()
-
-        raise
-
-    finally:
-        if cursor:
-            cursor.close()
-
-        if conexion:
-            conexion.close()
-
-
 @router.post("/projects/accept")
 def guardar_proyecto_aceptado(payload: AcceptedProjectRequest):
+    """Persiste la propuesta solo después de la decisión explícita del usuario."""
     dificultad = normalizar_dificultad(payload.dificultad)
     conexion = None
     cursor = None
@@ -414,67 +350,6 @@ def guardar_proyecto_aceptado(payload: AcceptedProjectRequest):
             conexion.close()
 
 
-@router.patch("/projects/{proyecto_id}/reject")
-def rechazar_proyecto(
-    proyecto_id: int
-):
-    conexion = None
-    cursor = None
-
-    try:
-        conexion = obtener_conexion()
-        cursor = conexion.cursor()
-
-        cursor.execute(
-            """
-            UPDATE proyectos
-            SET
-                estado = 'rechazado',
-                fecha_actualizacion = CURRENT_TIMESTAMP
-            WHERE id = %s
-            RETURNING
-                id,
-                estado,
-                fecha_actualizacion;
-            """,
-            (proyecto_id,)
-        )
-
-        fila = cursor.fetchone()
-
-        if fila is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Proyecto no encontrado."
-            )
-
-        conexion.commit()
-
-        return {
-            "success": True,
-            "proyecto": {
-                "id": fila[0],
-                "estado": fila[1],
-                "fecha_actualizacion": (
-                    fila[2].isoformat()
-                )
-            }
-        }
-
-    except HTTPException:
-        if conexion:
-            conexion.rollback()
-
-        raise
-
-    finally:
-        if cursor:
-            cursor.close()
-
-        if conexion:
-            conexion.close()
-
-
 @router.post("/evaluate")
 async def entregar_y_evaluar(
     proyecto_id: int = Form(...),
@@ -489,6 +364,7 @@ async def entregar_y_evaluar(
     if len(archivos) > 10:
         raise HTTPException(status_code=400, detail="Puedes entregar como máximo 10 archivos.")
 
+    # Se unen los archivos con separadores para que Gemini conserve su contexto.
     contenidos = []
     total_bytes = 0
     for archivo in archivos:

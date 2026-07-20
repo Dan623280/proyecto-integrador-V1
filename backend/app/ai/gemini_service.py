@@ -1,3 +1,5 @@
+"""Adaptador de Gemini: solicita JSON estructurado para proyectos y evaluaciones."""
+
 import json
 import os
 import re
@@ -13,10 +15,12 @@ GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_M
 
 
 class GeminiAPIError(RuntimeError):
+    """Mensaje seguro que puede mostrarse al usuario sin exponer la clave."""
     pass
 
 
 def _extraer_json(texto: str) -> dict[str, Any]:
+    """Admite respuestas con o sin bloque Markdown y devuelve solo el objeto JSON."""
     texto = re.sub(r"^```(?:json)?", "", texto.strip(), flags=re.IGNORECASE)
     texto = re.sub(r"```$", "", texto).strip()
     inicio, final = texto.find("{"), texto.rfind("}")
@@ -26,6 +30,7 @@ def _extraer_json(texto: str) -> dict[str, Any]:
 
 
 def _consultar_gemini(prompt: str, api_key: str) -> dict[str, Any]:
+    """Envía una petición puntual; la clave se usa en memoria y no se persiste."""
     if not api_key or len(api_key.strip()) < 20:
         raise GeminiAPIError("Ingresa una API key de Gemini válida.")
     try:
